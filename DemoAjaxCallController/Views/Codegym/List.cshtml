@@ -1,0 +1,71 @@
+﻿@using DemoAjaxCallController.Models
+
+@model List<Codegymer>
+
+@{
+    ViewData["Title"] = "List";
+}
+
+<h1 class="text-center">Danh Sách Học Viên Codegym</h1>
+
+<div class="row">
+    <table class="table">
+        <tr>
+            <td>Mã Học Viên</td>
+            <td>Tên Học Viên</td>
+            <td>Đẹp Trai</td>
+            <td>Giàu</td>
+            <td>Thông Minh</td>
+        </tr>
+        @for (int i = 0; i < Model.Count ; i++)
+        {
+            <tr>
+                <td>
+                    @Model[i].Id
+                    @Html.HiddenFor(m => m[i].Id)
+                </td>
+                <td>@Model[i].Name</td>
+                <td>@Html.CheckBoxFor(Model => Model[i].IsDepTrai)</td>
+                <td>@Html.CheckBoxFor(Model => Model[i].IsGiau)</td>
+                <td>@Html.CheckBoxFor(Model => Model[i].IsThongMinh)</td>
+            </tr>
+        }
+    </table>
+</div>
+
+<script>
+    $('input[type="checkbox"]').click(function (d) {
+        let idValue = $(this).attr('name');
+        let textTmp = idValue.split('.');
+        let id = getId(textTmp[0]) + 1;
+        console.log(id);
+
+        //var stt = $(this).data("stt");
+
+        var data = {
+            id: id,
+            attr: textTmp[1]
+        }
+        var url = "@Url.Action("UpdateStatus")";
+        var success = function (result) {
+            ThanhCong(result);
+        };
+        $.post(url, data, success);
+
+    });
+
+    function getId(str) {
+        let kq = str.replace('[', '');
+        kq = kq.replace(']', '');
+
+        return +kq;
+    }
+
+    function ThanhCong(result) {
+        alert(`Update ${result.name} thành công`);
+
+        result.isDepTrai ? alert(`${result.name} Đẹp Trai`) : alert(`${result.name} Không được đẹp Trai`);
+        result.isGiau ? alert(`${result.name} Giàu`) : alert(`${result.name} Không được Giàu`);
+        result.isThongMinh ? alert(`${result.name} Thông Minh`) : alert(`${result.name} Không được thông minh`);
+    }
+</script>
